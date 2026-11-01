@@ -1,4 +1,6 @@
 "use client";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Comp from "@/components/applications-table/comp";
 import { useEffect, useState } from "react";
 const projectData = [
@@ -23,7 +25,7 @@ const projectData = [
     status: "Rejected",
   },
 ];
-export default function Applications({params}) {
+function Applications({params}) {
   const [projectData,setProjectData]=useState([]);
   // useEffect(() => {
     // const response = fetch("/api/applications/getapplications", {
@@ -47,5 +49,20 @@ export default function Applications({params}) {
       <h1 className="text-5xl font-bold">Applications</h1>
       <Comp projectId={params.projectId} />
     </div>
+  );
+}
+
+
+// Static export can't pre-render database IDs, so the ID comes from ?id= instead of the URL path.
+function PageWithId() {
+  const projectId = useSearchParams().get("id") ?? "";
+  return <Applications params={{ projectId }} />;
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<h1>Loading...</h1>}>
+      <PageWithId />
+    </Suspense>
   );
 }

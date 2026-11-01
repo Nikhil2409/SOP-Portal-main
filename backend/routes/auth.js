@@ -1,10 +1,13 @@
 const passport = require('../controllers/passport');
 const router = require('express').Router();
 
+// Empty by default: the frontend is served from this same server, so redirects stay relative.
+const CLIENT_URL = process.env.CLIENT_URL || '';
+
 router.get('/google', passport.authenticate('google', { scope: ['profile','email'] }));
 
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
-    return res.redirect(`${process.env.CLIENT_URL}/${req.user.type}`);
+    return res.redirect(`${CLIENT_URL}/${req.user.type}`);
 });
 
 router.get('/logout', (req, res) => {
@@ -12,7 +15,7 @@ router.get('/logout', (req, res) => {
         if(err){
             return res.status(500).json({message: 'Could not log out user'});
         }
-        return res.redirect(`${process.env.CLIENT_URL}/login`);
+        return res.redirect(`${CLIENT_URL}/login`);
     });
 });
 

@@ -1,4 +1,6 @@
 "use client";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormState } from "react-hook-form";
@@ -65,7 +67,7 @@ const formSchema2 = z.object({
   // }),
 });
 
-export default function ProfileForm(props) {
+function ProfileForm(props) {
   const [projectDetails, setProjectDetails] = useState({});
 
   const router = useRouter();
@@ -268,5 +270,20 @@ export default function ProfileForm(props) {
         </form> */}
       {/* </Form> */}
     </div>
+  );
+}
+
+
+// Static export can't pre-render database IDs, so the ID comes from ?id= instead of the URL path.
+function PageWithId() {
+  const projectId = useSearchParams().get("id") ?? "";
+  return <ProfileForm params={{ projectId }} />;
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<h1>Loading...</h1>}>
+      <PageWithId />
+    </Suspense>
   );
 }

@@ -84,27 +84,20 @@ const applyForProject = async (req,res) => {
             return res.status(400).send('Please upload your details first');
         }
 
-        //check if student already applied for given project
-        const applied = student.projects.find((project)=>{
-            return project.id == id;
-        })
-        if(applied){
-            return res.status(400).send('Student already applied for this project');
+        // Check-and-insert in one atomic update so two quick clicks can't both apply.
+        const updatedStudent = await Student.findOneAndUpdate(
+            { _id: student._id, 'projects.id': { $ne: project._id } },
+            { $push: { projects: { id: project._id, status: 'Pending' } } },
+            { new: true }
+        );
+        if(!updatedStudent){
+            return res.status(409).send('Student already applied for this project');
         }
 
-        const new_project = {
-            id: project._id,
-            status: 'Pending'
-        }
-        student.projects.push(new_project);
-        await student.save();
-
-        const new_student = {
-            id: student._id,
-            status: 'Pending'
-        }
-        project.students.push(new_student);
-        await project.save();
+        await Project.updateOne(
+            { _id: project._id, 'students.id': { $ne: student._id } },
+            { $push: { students: { id: student._id, status: 'Pending' } } }
+        );
 
         return res.status(200).send('Applied for project successfully');
     } catch(error){

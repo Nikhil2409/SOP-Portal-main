@@ -6,7 +6,7 @@
 
 |Name|BITSid|
 |----|------|
-|[Nikhil Kudva](https://www.linkedin.com/in/nikhil-kudva-3a42bb239/)|2021A7PS2409G|
+|[Nikhil Kudva](https://www.linkedin.com/in/nikhil-kudva/)|2021A7PS2409G|
 |[Ruchik Bakhai](https://www.linkedin.com/in/ruchik-bakhai/)|2021A7PS2054G|
 |[Shubh Agarwal](https://www.linkedin.com/in/iamshubhagarwal/)|2021AAPS2770G|
 |[Vatsal Patel](https://www.linkedin.com/in/vatsal-patel1/)|2021A7PS2460G|
@@ -75,6 +75,26 @@ This web-based task management system facilitates the process of managing SOP/DO
      - GPSRN
      - List of applied students
    
+## Since the hackathon
+
+The hackathon version above was built by Team SemBack. Later changes by Nikhil Kudva:
+
+- **Static export:** the Next.js frontend now builds to plain HTML/JS (`output: "export"`) and is served by the Express backend from the same origin as the API, so production needs no Next.js server.
+- **Query-param routes:** project pages moved from `/project/[projectId]` to `/project?id=...`, since database IDs can't be pre-rendered at build time.
+- **Duplicate applications:** applying now uses a single atomic MongoDB update and returns `409 Conflict` on a repeat, so two quick clicks can't create two applications.
+- **Config:** the session secret and post-login redirect URL now come from environment variables.
+
+## Running it
+
+```bash
+cd frontend && npm install && npm run build   # writes the static site to frontend/out
+cd ../backend && npm install && node index.js # serves the API and the site on PORT (default 5000)
+```
+
+Backend `.env`: `MONGO_URI`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`, optional `PORT` and `CLIENT_URL` (leave empty when the frontend is served by this backend).
+
+For frontend development, run `npm run dev` in `frontend` alongside the backend (it proxies `/api` to port 5000) and set `CLIENT_URL=http://localhost:3000`.
+
 ## Conclusion
 
 The SOP/DOP/SAT Project Management System streamlines the process of managing academic projects, enhancing collaboration between faculty and students within the CSIS department.

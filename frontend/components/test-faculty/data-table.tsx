@@ -109,10 +109,10 @@ export function DataTable<TData, TValue>({
 
                   <TableCell onClick={() => console.log(row.original)}>
                     <Button asChild>
-                      <Link href={`/project/${row.original.id}`}>Edit</Link>
+                      <Link href={`/project?id=${row.original.id}`}>Edit</Link>
                     </Button>
                   </TableCell>
-                  <TableCell onClick={() =>router.push(`/applications/${row.original.id}`)}>
+                  <TableCell onClick={() =>router.push(`/applications?id=${row.original.id}`)}>
                     <Button variant="secondary">View Applications</Button>
                   </TableCell>
                 </TableRow>
